@@ -10,7 +10,7 @@
  *
  * Learn more at https://developers.cloudflare.com/workers/
  */
-import { addBill, Bill, getAllBill } from '../controller/BillController';
+import { addBill, Bill, getAllBill, getMonthlyTotalAmount } from '../controller/BillController';
 
 export interface Env {
 	// If you set another name in wrangler.toml as the value for 'binding',
@@ -45,6 +45,7 @@ export default {
 					return new Response('Invalid JSON input', { status: 400 });
 				}
 			},
+			'/getMonthlyTotalAmount': async () => getMonthlyTotalAmount(env),
 		};
 		// 查找并执行对应的处理函数
 		const handler = routes[path];
