@@ -18,15 +18,15 @@ export async function getAllBill(env: Env) {
 		createTime: row.create_time, // 映射 create_time 到 createTime
 	}));
 	return new Response(JSON.stringify(bills), {
+		//allow CORS
 		headers: { 'content-type': 'application/json', 'Access-Control-Allow-Origin': '*' },
 	});
 }
 export async function addBill(env: Env, billData: Bill) {
-	console.log(billData);
 	const { results } = await env.DB.prepare('INSERT INTO bill (name, amount, category, create_time) VALUES (?, ?, ?, ?)')
 		.bind(billData.name, billData.amount, billData.category, billData.createTime)
 		.all();
-	return new Response(JSON.stringify(results), {
-		headers: { 'content-type': 'application/json' },
+	return new Response('1', {
+		headers: { 'content-type': 'application/json', 'Access-Control-Allow-Origin': '*' },
 	});
 }

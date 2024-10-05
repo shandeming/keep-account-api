@@ -21,13 +21,29 @@ export default {
 	async fetch(request, env, ctx): Promise<Response> {
 		const url = new URL(request.url);
 		const path = url.pathname;
+
+		// 处理预检请求
+		if (request.method === 'OPTIONS') {
+			return new Response(null, {
+				status: 204,
+				headers: {
+					'Access-Control-Allow-Origin': '*',
+					'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+					'Access-Control-Allow-Headers': 'Content-Type',
+				},
+			});
+		}
 		// 路由映射对象
 		const routes: { [key: string]: () => Promise<Response> } = {
 			'/': async () => new Response('Hello Worker!'),
 			'/getAllBill': async () => getAllBill(env),
 			'/addBill': async () => {
-				const bill: Bill = await request.json();
-				return addBill(env, bill);
+				try {
+					const bill: Bill = await request.json();
+					return addBill(env, bill);
+				} catch (error) {
+					return new Response('Invalid JSON input', { status: 400 });
+				}
 			},
 		};
 		// 查找并执行对应的处理函数
