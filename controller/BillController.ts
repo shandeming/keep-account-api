@@ -22,6 +22,22 @@ export async function getAllBill(env: Env) {
 		headers: { 'content-type': 'application/json', 'Access-Control-Allow-Origin': '*' },
 	});
 }
+//实现分页查找
+export async function getBillByPage(env: Env, page: number = 1, pageSize: number = 10) {
+	const offset = (page - 1) * pageSize;
+	const { results } = await env.DB.prepare(`select * from bill limit ? offset ?`).bind(pageSize, offset).all();
+	const bills: Bill[] = results.map((row: any) => ({
+		id: row.id,
+		name: row.name,
+		amount: row.amount,
+		category: row.category,
+		createTime: row.create_time, // 映射 create_time 到 createTime
+	}));
+	return new Response(JSON.stringify(bills), {
+		// 允许 CORS
+		headers: { 'content-type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+	});
+}
 export async function addBill(env: Env, billData: Bill) {
 	const { results } = await env.DB.prepare('INSERT INTO bill (name, amount, category, create_time) VALUES (?, ?, ?, ?)')
 		.bind(billData.name, billData.amount, billData.category, billData.createTime)
