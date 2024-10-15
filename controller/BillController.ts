@@ -1,12 +1,5 @@
 import { Env } from '../src/index';
-
-export interface Bill {
-	id: number;
-	name: string;
-	amount: number;
-	category: string;
-	createTime: string;
-}
+import Bill from '../type/Bill';
 
 export async function getAllBill(env: Env) {
 	const { results } = await env.DB.prepare('select * from bill').all();
@@ -25,7 +18,7 @@ export async function getAllBill(env: Env) {
 //实现分页查找
 export async function getBillByPage(env: Env, page: number = 1, pageSize: number = 10) {
 	const offset = (page - 1) * pageSize;
-	const { results } = await env.DB.prepare(`select * from bill limit ? offset ?`).bind(pageSize, offset).all();
+	const { results } = await env.DB.prepare(`select * from bill order by create_Time desc limit ? offset ?`).bind(pageSize, offset).all();
 	const bills: Bill[] = results.map((row: any) => ({
 		id: row.id,
 		name: row.name,

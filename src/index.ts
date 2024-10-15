@@ -10,8 +10,12 @@
  *
  * Learn more at https://developers.cloudflare.com/workers/
  */
-import { addBill, Bill, getAllBill, getBillByPage, getMonthlyTotalAmount } from '../controller/BillController';
+import { addBill, getAllBill, getBillByPage, getMonthlyTotalAmount } from '../controller/BillController';
+import { authenticate } from '../util/authenticate';
 
+import LoginController from '../controller/LoginController';
+import credential from '../type/credential';
+import Bill from '../type/Bill';
 export interface Env {
 	// If you set another name in wrangler.toml as the value for 'binding',
 	// replace "DB" with the variable name you defined.
@@ -21,7 +25,6 @@ export default {
 	async fetch(request, env, ctx): Promise<Response> {
 		const url = new URL(request.url);
 		const path = url.pathname;
-
 		// 处理预检请求
 		if (request.method === 'OPTIONS') {
 			return new Response(null, {
@@ -33,9 +36,25 @@ export default {
 				},
 			});
 		}
-		// 路由映射对象
+		// TODO: implement logic for login
+		// // 身份验证
+		// const isAuthenticated = await authenticate(request);
+		// if (!isAuthenticated && path !== '/login') {
+		// 	return new Response('Unauthorized', { status: 401 });
+		// }
+
+		// 路由表
 		const routes: { [key: string]: () => Promise<Response> } = {
 			'/': async () => new Response('Hello Worker!'),
+			'/login': async () => {
+				try {
+					const credentials: credential = await request.json();
+					const loginController = new LoginController();
+					return await loginController.login(env, credentials);
+				} catch (error) {
+					return new Response('Invalid JSON input', { status: 400 });
+				}
+			},
 			'/getAllBill': async () => getAllBill(env),
 			'/addBill': async () => {
 				try {
