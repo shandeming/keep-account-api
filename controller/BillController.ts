@@ -55,3 +55,10 @@ export async function getMonthlyTotalAmount(env: Env) {
 		headers: { 'content-type': 'application/json', 'Access-Control-Allow-Origin': '*' },
 	});
 }
+//获取存款
+export async function getDeposit(env: Env) {
+	const { results } = await env.DB.prepare('select * from deposit order by created_at desc limit 1').all();
+	return new Response(JSON.stringify(results), {
+		headers: { 'content-type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+	});
+}

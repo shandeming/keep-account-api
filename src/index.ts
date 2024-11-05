@@ -10,7 +10,7 @@
  *
  * Learn more at https://developers.cloudflare.com/workers/
  */
-import { addBill, getAllBill, getBillByPage, getMonthlyTotalAmount } from '../controller/BillController';
+import { addBill, getAllBill, getBillByPage, getDeposit, getMonthlyTotalAmount } from '../controller/BillController';
 import { authenticate } from '../util/authenticate';
 
 import LoginController from '../controller/LoginController';
@@ -66,6 +66,7 @@ export default {
 			},
 			'/getMonthlyTotalAmount': async () => getMonthlyTotalAmount(env),
 			'/getBillByPage': async () => getBillByPage(env, Number(url.searchParams.get('page')), Number(url.searchParams.get('pageSize'))),
+			'/getDeposit': async () => getDeposit(env),
 		};
 		// 查找并执行对应的处理函数
 		const handler = routes[path];
