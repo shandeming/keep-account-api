@@ -18,7 +18,7 @@ import {
 	getMonthlyTotalAmount,
 	getMonthlyTotalAmountByCategories,
 } from '../controller/BillController';
-import { authenticate } from '../util/authenticate';
+import handleCors from '../interceptor/handleCors';
 
 import LoginController from '../controller/LoginController';
 import credential from '../type/credential';
@@ -78,10 +78,14 @@ export default {
 		};
 		// 查找并执行对应的处理函数
 		const handler = routes[path];
+		let response: Response;
 		if (handler) {
-			return await handler();
+			response = await handler();
 		} else {
-			return new Response('Not Found', { status: 404 });
+			response = new Response('Not Found', { status: 404 });
 		}
+		// 允许 CORS
+		response = handleCors(request, response);
+		return await response;
 	},
 } satisfies ExportedHandler<Env>;

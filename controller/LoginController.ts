@@ -9,9 +9,8 @@ class LoginController {
 
 	public async login(env: Env, { username, password }: Credential): Promise<Response> {
 		const result = await this.loginService.login(username, password);
-
 		if (result) {
-			return new Response('Login success', { status: 200 });
+			return new Response('Login successful', { status: 200 });
 		} else {
 			return new Response('Login failed', { status: 401 });
 		}
